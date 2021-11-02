@@ -1,0 +1,189 @@
+---
+title: "Práctica 2: probabilidad"
+author: Aquí, tu nombre
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objetivos de la práctica
+Esta práctica tiene como principales objetivos:
+    
+* Seguir familiarizándose con el lenguaje `R`.
+* Profundizar en el uso de simulaciones para calcular probabilidades.
+
+# Entrega y evaluación 
+El **deadline para la entrega de la práctica se indica en el curso virtual**.
+Cualquier trabajo recibido **fuera del plazo contará como no entregado**. La
+entrega consistirá, **obligatoriamente, en el fichero de R Markdown con 
+extensión `*.Rmd` y el resultado de compilarlo con extension `*.html` **
+
+Las prácticas que no compilen el fichero .Rmd, generando un fichero HTML válido,
+**no serán evaluadas**.
+
+## El problema de los sobres
+Preparamos n cartas dirigidas a n personas distintas y n sobres con las correspondientes
+direcciones. Metemos al azar una carta en cada sobre. ¿Cual es la probabilidad de que
+lleguen a su destinatario correcto exactamente k cartas? Escribe una función con prototipo
+`prob_letter(n, k, nb_sims)` que calcule mediante simulaciones la probabilidad pedida.
+
+```{r letter}
+cartas = c("c")
+personas = c("p")
+
+prob_letter = function(n, k, nb_sims=5000){
+  cartas = paste(rep(cartas,each=n), 1:n, sep="_")
+  personas = paste(rep(personas,each=n), 1:n, sep="_")
+  experiments = replicate(nb_sims, {
+    trial_cartas = sample(cartas, n, replace = FALSE)
+    trial_personas = sample(personas,n, replace = FALSE)
+
+
+    splitted_cartas = strsplit(trial_cartas, "_")
+    splitted_personas = strsplit(trial_personas, "_")
+
+    count_carta = sapply(splitted_cartas, function(x) x[2])
+    count_persona = sapply(splitted_personas, function(x) x[2])
+    sum(count_carta == count_persona) == k
+    })
+  
+  sum(experiments)/nb_sims
+  
+}
+```
+-----
+
+## El problema del secretario
+Este problema, conocido como el problema del secretario, apareció en la columna
+de problemas matemáticas de Martin Gardner, en *Scientific American*. Originalmente,
+el enunciado trataba de encontrar la estrategia óptima para que un directivo 
+eligiese de forma óptima al secretario más competente entre un grupo de $n$ 
+candidatos. Sin embargo, también se ha aplicado a muchos otros casos 
+interesantes, incluyendo el cálculo del número de citas (con personas distintas)
+que debes de tener antes de "sentar la cabeza" y maximizar tus probabilidades
+de elegir a tu marido/esposa ideal. En lo que sigue, nosotros formulamos el 
+problema en términos de una lista de n números.
+
+En $n$ trozos de papel, escribimos $n$ números distintos (que pueden tomar cualquier
+valor positivo). Sea $M$ es el número más grande. El juego consiste en que se te
+irán mostrando los trozos de papel  uno a uno, y tu tienes que decidir si quedarte
+con el número que ves (y el juego acaba) o si lo rechazas y pides otro número. Una vez
+rechazado un número, no puedes volver atrás y elegir un número ya visto (¿puedes 
+ver el paralelismo con las citas?). Tu objetivo es elegir el número más grande, 
+$M$. Ten en cuenta que cuando se te enseña el número k-ésimo, sólo cuentas con 
+la información relativa a los $k-1$ números anteriores.
+
+Aunque el problema es difícil, existe una estrategia que da buenos resultados: 
+Para algún número $r$ entre 0 y n, rechazas los $r$ primeros números y luego
+seleccionas el primer número que sea mejor que los primeros $r$.
+
+### Ejercicio: Secretario 1
+Implementa las funciones necesarias para simular esta estrategia para cualquier
+$r$ y cualquier $n$:
+    
+* `simulate_game`: recibe `r` y `n` y simula una sola realización del juego.
+Devuelve `TRUE` si se acierta $M$ y `FALSE` en caso contrario.
+* `estimate_probability`: recibe `r`, `n` y `nb_sims` (número de simulaciones)
+y hace uso de la función `simulate_game` para calcular la probabilidad de acertar 
+$M$ usando la estrategia de rechazar los $r$ primeros. 
+
+```{r secretary_i}
+simulate_game = function(r, n){
+  trozos = floor(runif(n, 1, 999999999))
+  m = max(trozos)
+  antes_r_trozos = trozos[1:r]
+  despues_r_trozos = tail(trozos, r)
+  mejor_r = max(antes_r_trozos)
+  acierto = 0
+  for(num in despues_r_trozos){
+    if(num > mejor_r){
+      acierto = num
+      break
+    }
+  }
+  acierto == m
+ 
+}
+simulate_game(17, 100)
+
+estimate_probability = function(r, n, nb_sims=5000){
+  sims = replicate(nb_sims, {
+    simulate_game(r, n)
+  })
+  sum(sims)/nb_sims
+}
+
+estimate_probability(18, 500)
+```
+-----
+
+### Ejercicio: Secretario 2
+Aplica tus funciones al caso $n$ = 20 y calcula las probabilidades, $p_r$,
+de acertar $M$ con la estrategia de rechazar los $r$ primeros números para 
+todo número $r$ válido.
+
+```{r secretary_ii}
+```
+-----
+
+### Ejercicio: Secretario 3
+Dibuja $p_r$ Vs. $r$.
+
+```{r secretary_iii}
+```
+-----
+
+
+### Ejercicio: Secretario 4
+En base al gráfico anterior, ¿cuál es la mejor estrategia para $n=20$? ¿Cuál es
+la probabilidad de  acertar $M$ con esta estrategia?
+
+*Contesta aquí*
+
+-----
+
+## Ejercicio: Urnas vacías
+Se distribuyen $r$ bolas en $n$ urnas. Escribe una función con prototipo 
+`prob_urn(r, n, m)` que
+calcule mediante simulaciones la probabilidad de que haya exactamente $m$ 
+urnas vacías.
+
+```{r urn}
+
+```
+
+-----
+## Ejercicio: La paradoja de Bertrand
+El matemático francés Joseph Louis François Bertrand planteó el siguiente problema en 1889, conocido
+como la paradoja de Bertrand. Hay tres cajas. Una caja contiene dos monedas de oro, otra caja 
+contiene dos monedas de plata y la última caja contiene una moneda de oro y una de plata. Se elige 
+una caja al azar. Se coge una moneda de la caja y resulta ser de oro. ¿Cuál es la probabilidad de que
+la otra moneda de la caja sea también de oro? Calcula la respuesta mediante simulaciones. 
+
+**Pista**:¡fíjate que este problema debe ser resuelto mediante **probabilidades condicionales**! 
+Una de las formas de hacerlo es utilizar la fórmula de la probabilidad condicional
+$$P(X=x \mid Y=y) = \frac{P(X=x, Y=y)}{P(Y=y)},$$
+lo que te obliga a calcular dos probabilidades: $P(X=x, Y=y)$ y $P(Y=y)$. La 
+forma más eficiente de hacerlo es que, en cada simulación, compruebes si se dan
+las dos "condiciones"  que nos interesan: 1) que se cumpla $Y=y$ y 2) que se cumpla
+simultáneamente  $X=x$ e $Y=y$. Estudia el siguiente fragmento de código para aprender a devolver 
+los resultados de varias condiciones dentro de `replicate`:
+
+```{r tip}
+replicate(5, {
+  x = sample(1:10, 1)
+  # comrobamos si es 5 (condición 1) o si es par (condición 2)
+  is_5 = (x == 5)
+  is_even = (x %% 2 == 0)
+  # devolvemos ambas comprobaciones
+  c("five" = is_5, "even" = is_even)
+})
+```
+
+
+```{r boxes}
+
+```
+
