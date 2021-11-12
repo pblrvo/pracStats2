@@ -106,7 +106,6 @@ simulate_game = function(r, n){
   acierto == m
  
 }
-simulate_game(17, 100)
 
 estimate_probability = function(r, n, nb_sims=5000){
   sims = replicate(nb_sims, {
@@ -114,8 +113,6 @@ estimate_probability = function(r, n, nb_sims=5000){
   })
   sum(sims)/nb_sims
 }
-
-estimate_probability(18, 500)
 ```
 -----
 
@@ -125,6 +122,8 @@ de acertar $M$ con la estrategia de rechazar los $r$ primeros números para
 todo número $r$ válido.
 
 ```{r secretary_ii}
+simulate_game(12, 20)
+estimate_probability(12, 20)
 ```
 -----
 
@@ -132,6 +131,7 @@ todo número $r$ válido.
 Dibuja $p_r$ Vs. $r$.
 
 ```{r secretary_iii}
+
 ```
 -----
 
