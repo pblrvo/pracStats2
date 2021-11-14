@@ -188,10 +188,37 @@ caja1 = c("O","O")
 caja2 = c("P","P")
 caja3 = c("O","P")
 cajas = c(caja1,caja2,caja3)
-caja_aleatoria = sample(cajas,2) #Me coge aleatoriamente una caja
-caja_aleatoria
-is_2gold = (caja_aleatoria == caja1)
-is_2gold
+resultado = 0
+resultado2 = 0
+
+pruebas_OroOro = replicate(10000,{
+  caja_aleatoria = sample(cajas,2) #Me coge aleatoriamente una caja
+  caja_aleatoria
+  is_2gold = (caja_aleatoria == caja1)
+  is_2gold
+  sum(is_2gold)
+  if(sum(is_2gold) == 2){
+    resultado = resultado +1
+  }
+  sum(resultado)
+})
+probabilidadXY = sum(pruebas_OroOro)/length(pruebas_OroOro) #Me da como resultado la probabilidad de que salga la caja de oro y oro, es decir (P(X = oro, Y = oro))
+
+pruebas_2sivler = replicate(10000,{
+  caja_aleatoria2 = sample(cajas,2)
+  caja_aleatoria2
+  is_2silver = (caja_aleatoria2 == caja2)
+  is_2silver
+  sum(is_2silver)
+  if(sum(is_2silver) == 2){
+    resultado2 = resultado2 +1
+  }
+  sum(resultado2)
+})
+probabilidadY = 1-(sum(pruebas_2sivler)/length(pruebas_2sivler))
+
+resultadoFinal = probabilidadXY / probabilidadY
+resultadoFinal
 
 ```
 
