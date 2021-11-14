@@ -1,6 +1,6 @@
 ---
 title: "Práctica 2: probabilidad"
-author: Aquí, tu nombre
+author: Alberto Daguerre, Joaquín Moreno, Pablo Rivero
 output: html_document
 ---
 
@@ -184,6 +184,14 @@ replicate(5, {
 
 
 ```{r boxes}
+caja1 = c("O","O")
+caja2 = c("P","P")
+caja3 = c("O","P")
+cajas = c(caja1,caja2,caja3)
+caja_aleatoria = sample(cajas,2) #Me coge aleatoriamente una caja
+caja_aleatoria
+is_2gold = (caja_aleatoria == caja1)
+is_2gold
 
 ```
 
