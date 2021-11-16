@@ -91,7 +91,7 @@ $M$ usando la estrategia de rechazar los $r$ primeros.
 
 ```{r secretary_i}
 simulate_game = function(r, n){
-  trozos = runif(n, 1, 999999999) #crea una lista de numeros aleatorios de tamaño n
+  trozos = floor(runif(n, 1, 999999999)) #crea una lista de numeros aleatorios de tamaño n
   m = max(trozos)  #el numero maximo de la lista
   antes_r_trozos = trozos[1:r]   #slice de la lista, los primeros r numeros
   despues_r_trozos = tail(trozos, (r+1)) #slice de la lista, los numeros despues de r
@@ -162,7 +162,25 @@ calcule mediante simulaciones la probabilidad de que haya exactamente $m$
 urnas vacías.
 
 ```{r urn}
+calc_urna= function(r, n, m){
+    urnas = c(1:n)
+    urnas_llenas = c()
+    for (bola in 1:r){
+      urnas_llenas = c(urnas_llenas, sample(urnas, 1))
+    }
+    urnas_vacias = setdiff(urnas, urnas_llenas)
+   urnas_vacias
+   length(urnas_vacias) == m
+}
 
+prob_urn = function(r, n, m, nb_sims=5000){
+  sims = replicate(nb_sims, {
+   calc_urna(r, n, m)
+  })
+  sum(sims)/nb_sims
+}
+
+prob_urn(5, 10, 7)
 ```
 
 -----
