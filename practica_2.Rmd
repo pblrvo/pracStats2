@@ -91,10 +91,10 @@ $M$ usando la estrategia de rechazar los $r$ primeros.
 
 ```{r secretary_i}
 simulate_game = function(r, n){
-  trozos = floor(runif(n, 1, 999999999)) #crea una lista de numeros aleatorios de tamaño n
+  trozos = runif(n, 1, 999999999) #crea una lista de numeros aleatorios de tamaño n
   m = max(trozos)  #el numero maximo de la lista
   antes_r_trozos = trozos[1:r]   #slice de la lista, los primeros r numeros
-  despues_r_trozos = tail(trozos, r) #slice de la lista, los numeros despues de r
+  despues_r_trozos = tail(trozos, (r+1)) #slice de la lista, los numeros despues de r
   mejor_r = max(antes_r_trozos)  #mejor numero de los primeros r numeros
   acierto = 0
   for(num in despues_r_trozos){
@@ -107,7 +107,7 @@ simulate_game = function(r, n){
  
 }
 
-estimate_probability = function(r, n, nb_sims=5000){
+estimate_probability = function(r, n, nb_sims=7000){
   sims = replicate(nb_sims, {
     simulate_game(r, n)
   })
@@ -122,8 +122,13 @@ de acertar $M$ con la estrategia de rechazar los $r$ primeros números para
 todo número $r$ válido.
 
 ```{r secretary_ii}
-simulate_game(12, 20)
-estimate_probability(12, 20)
+values = c() 
+for (r in 1:20){
+  value = estimate_probability(r, 20)
+  values = c(values, value)
+}
+values
+
 ```
 -----
 
@@ -131,9 +136,7 @@ estimate_probability(12, 20)
 Dibuja $p_r$ Vs. $r$.
 
 ```{r secretary_iii}
-p_r = estimate_probability(12, 20)
-
-plot(p_r, )
+plot(1:20, values)
 ```
 -----
 
@@ -142,10 +145,16 @@ plot(p_r, )
 En base al gráfico anterior, ¿cuál es la mejor estrategia para $n=20$? ¿Cuál es
 la probabilidad de  acertar $M$ con esta estrategia?
 
-*Contesta aquí*
-
+La mejor estrategia para n=20 es tener un r con valor=10. Con una probabilidad de
+0.3487143
 -----
+```{r secretary_iv}
+prob = values
+r = 1:20
+r[max(prob) == prob]
+estimate_probability(10, 20)
 
+```
 ## Ejercicio: Urnas vacías
 Se distribuyen $r$ bolas en $n$ urnas. Escribe una función con prototipo 
 `prob_urn(r, n, m)` que
