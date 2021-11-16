@@ -91,19 +91,19 @@ $M$ usando la estrategia de rechazar los $r$ primeros.
 
 ```{r secretary_i}
 simulate_game = function(r, n){
-  trozos = floor(runif(n, 1, 999999999))
-  m = max(trozos)
-  antes_r_trozos = trozos[1:r]
-  despues_r_trozos = tail(trozos, r)
-  mejor_r = max(antes_r_trozos)
+  trozos = floor(runif(n, 1, 999999999)) #crea una lista de numeros aleatorios de tamaño n
+  m = max(trozos)  #el numero maximo de la lista
+  antes_r_trozos = trozos[1:r]   #slice de la lista, los primeros r numeros
+  despues_r_trozos = tail(trozos, r) #slice de la lista, los numeros despues de r
+  mejor_r = max(antes_r_trozos)  #mejor numero de los primeros r numeros
   acierto = 0
   for(num in despues_r_trozos){
-    if(num > mejor_r){
-      acierto = num
+    if(num > mejor_r){      #busca el primer numero mejor que los primeros r
+      acierto = num       
       break
     }
   }
-  acierto == m
+  acierto == m     #compara si el numero escogido es igual a m
  
 }
 
@@ -131,7 +131,9 @@ estimate_probability(12, 20)
 Dibuja $p_r$ Vs. $r$.
 
 ```{r secretary_iii}
+p_r = estimate_probability(12, 20)
 
+plot(p_r, )
 ```
 -----
 
